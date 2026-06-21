@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { Button } from "./components/ui/button";
+import { useEffect, useState } from 'react';
+import { Button } from './components/ui/button';
 
 function App() {
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState('');
 
     // Make an API call to "/api/hello"
     useEffect(() => {
-        fetch("/api/hello")
+        fetch('/api/hello')
             .then((res) => res.json())
             .then((data) => setMessage(data.message));
     }, []);
