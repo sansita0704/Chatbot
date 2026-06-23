@@ -45,35 +45,39 @@ app.post('/api/chat', async (req: Request, res: Response) => {
         return;
     }
 
-    // 1. Take user's prompt from the chat
-    const { prompt, conversationId } = req.body;
+    try {
+        // 1. Take user's prompt from the chat
+        const { prompt, conversationId } = req.body;
 
-    const chatHistory = conversations.get(conversationId) || [];
+        const chatHistory = conversations.get(conversationId) || [];
 
-    chatHistory.push({
-        role: 'user',
-        parts: [{ text: prompt }],
-    });
+        chatHistory.push({
+            role: 'user',
+            parts: [{ text: prompt }],
+        });
 
-    // 2. Send prompt to gemini
-    const response = await client.models.generateContent({
-        model: 'gemini-2.5-flash-lite',
-        contents: chatHistory,
-        config: {
-            temperature: 0.2,
-            maxOutputTokens: 100,
-        },
-    });
+        // 2. Send prompt to gemini
+        const response = await client.models.generateContent({
+            model: 'gemini-2.5-flash-lite!',
+            contents: chatHistory,
+            config: {
+                temperature: 0.2,
+                maxOutputTokens: 100,
+            },
+        });
 
-    chatHistory.push({
-        role: 'model',
-        parts: [{ text: response.text }],
-    });
+        chatHistory.push({
+            role: 'model',
+            parts: [{ text: response.text }],
+        });
 
-    conversations.set(conversationId, chatHistory);
+        conversations.set(conversationId, chatHistory);
 
-    // 3. Return the JSON object
-    res.json({ message: response.text });
+        // 3. Return the JSON object
+        res.json({ message: response.text });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to generate a response.' });
+    }
 });
 
 // Start the server
