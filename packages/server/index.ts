@@ -24,19 +24,36 @@ app.get('/api/hello', (req: Request, res: Response) => {
     });
 });
 
+// conversationId -> chatHistory
+const conversations = new Map<string, any[]>();
+
 app.post('/api/chat', async (req: Request, res: Response) => {
     // 1. Take user's prompt from the chat
-    const { prompt } = req.body;
+    const { prompt, conversationId } = req.body;
+
+    const chatHistory = conversations.get(conversationId) || [];
+
+    chatHistory.push({
+        role: 'user',
+        parts: [{ text: prompt }],
+    });
 
     // 2. Send prompt to gemini
     const response = await client.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
+        model: 'gemini-2.5-flash-lite',
+        contents: chatHistory,
         config: {
             temperature: 0.2,
             maxOutputTokens: 100,
         },
     });
+
+    chatHistory.push({
+        role: 'model',
+        parts: [{ text: response.text }],
+    });
+
+    conversations.set(conversationId, chatHistory);
 
     // 3. Return the JSON object
     res.json({ message: response.text });
