@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import z from 'zod';
 
 dotenv.config();
 
@@ -27,7 +28,23 @@ app.get('/api/hello', (req: Request, res: Response) => {
 // conversationId -> chatHistory
 const conversations = new Map<string, any[]>();
 
+const chatSchema = z.object({
+    prompt: z
+        .string()
+        .trim()
+        .min(1, 'Prompt is required.')
+        .max(1000, 'Prompt is too long (max 1000 characters)'),
+    conversationId: z.string().uuid(),
+});
+
 app.post('/api/chat', async (req: Request, res: Response) => {
+    // Validate the input data:
+    const parseResult = chatSchema.safeParse(req.body);
+    if (!parseResult.success) {
+        res.status(400).json(parseResult.error.format());
+        return;
+    }
+
     // 1. Take user's prompt from the chat
     const { prompt, conversationId } = req.body;
 
