@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import z from 'zod';
+import { conversationRepository } from './repositories/conversation.repository';
 
 dotenv.config();
 
@@ -25,9 +26,6 @@ app.get('/api/hello', (req: Request, res: Response) => {
     });
 });
 
-// conversationId -> chatHistory
-const conversations = new Map<string, any[]>();
-
 const chatSchema = z.object({
     prompt: z
         .string()
@@ -49,7 +47,8 @@ app.post('/api/chat', async (req: Request, res: Response) => {
         // 1. Take user's prompt from the chat
         const { prompt, conversationId } = req.body;
 
-        const chatHistory = conversations.get(conversationId) || [];
+        const chatHistory =
+            conversationRepository.getChatHistory(conversationId);
 
         chatHistory.push({
             role: 'user',
@@ -71,7 +70,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
             parts: [{ text: response.text }],
         });
 
-        conversations.set(conversationId, chatHistory);
+        conversationRepository.setChatHistory(conversationId, chatHistory);
 
         // 3. Return the JSON object
         res.json({ message: response.text });
