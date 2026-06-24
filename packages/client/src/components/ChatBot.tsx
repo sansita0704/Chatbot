@@ -12,14 +12,19 @@ type ChatResponse = {
     message: string;
 };
 
+type Message = {
+    content: string;
+    role: 'user' | 'bot';
+};
+
 const ChatBot = () => {
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const conversationId = useRef(crypto.randomUUID());
     const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
     // Destructure the data here only:
     const onSubmit = async ({ prompt }: FormData) => {
-        setMessages((prev) => [...prev, prompt]);
+        setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
 
         reset();
 
@@ -28,7 +33,10 @@ const ChatBot = () => {
             conversationId: conversationId.current,
         });
 
-        setMessages((prev) => [...prev, data.message]);
+        setMessages((prev) => [
+            ...prev,
+            { content: data.message, role: 'bot' },
+        ]);
     };
 
     const onKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
@@ -40,9 +48,18 @@ const ChatBot = () => {
 
     return (
         <div>
-            <div>
+            <div className="flex flex-col gap-2 mx-2 my-5">
                 {messages.map((message, index) => (
-                    <p key={index}>{message}</p>
+                    <p
+                        key={index}
+                        className={`px-3 py-1 rounded-xl ${
+                            message.role === 'user'
+                                ? 'bg-blue-600 text-white self-end'
+                                : 'bg-gray-100 text-black self-start'
+                        }`}
+                    >
+                        {message.content}
+                    </p>
                 ))}
             </div>
             <form
