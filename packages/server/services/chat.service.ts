@@ -30,7 +30,7 @@ export const chatService = {
             contents: chatHistory,
             config: {
                 temperature: 0.2,
-                maxOutputTokens: 100,
+                maxOutputTokens: 200,
             },
         });
 
