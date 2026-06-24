@@ -8,7 +8,7 @@ const client = new GoogleGenAI({
 
 type ChatResponse = {
     id: string | undefined;
-    message: string | undefined;
+    message: string;
 };
 
 export const chatService = {
@@ -26,7 +26,7 @@ export const chatService = {
 
         // 2. Send prompt to gemini
         const response = await client.models.generateContent({
-            model: 'gemini-2.5-flash-lite!',
+            model: 'gemini-2.5-flash-lite',
             contents: chatHistory,
             config: {
                 temperature: 0.2,
@@ -41,6 +41,6 @@ export const chatService = {
 
         conversationRepository.setChatHistory(conversationId, chatHistory);
 
-        return { id: response.responseId, message: response.text };
+        return { id: response.responseId, message: response.text || '' };
     },
 };
