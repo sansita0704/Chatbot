@@ -20,12 +20,14 @@ type Message = {
 
 const ChatBot = () => {
     const [messages, setMessages] = useState<Message[]>([]);
+    const [isBotTyping, setIsBotTyping] = useState(false);
     const conversationId = useRef(crypto.randomUUID());
     const { register, handleSubmit, reset, formState } = useForm<FormData>();
 
     // Destructure the data here only:
     const onSubmit = async ({ prompt }: FormData) => {
         setMessages((prev) => [...prev, { content: prompt, role: 'user' }]);
+        setIsBotTyping(true);
 
         reset();
 
@@ -38,6 +40,7 @@ const ChatBot = () => {
             ...prev,
             { content: data.message, role: 'bot' },
         ]);
+        setIsBotTyping(false);
     };
 
     const onKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
@@ -62,6 +65,13 @@ const ChatBot = () => {
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                     </div>
                 ))}
+                {isBotTyping && (
+                    <div className="flex gap-1 bg-gray-100 p-3 self-start rounded-2xl">
+                        <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse"></div>
+                        <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]"></div>
+                        <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]"></div>
+                    </div>
+                )}
             </div>
             <form
                 onSubmit={handleSubmit(onSubmit)}
