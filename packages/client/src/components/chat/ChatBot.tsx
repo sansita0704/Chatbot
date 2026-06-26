@@ -3,7 +3,8 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { FaArrowUp } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
+import TypingIndicator from './TypingIndicator';
 
 type FormData = {
     prompt: string;
@@ -92,13 +93,7 @@ const ChatBot = () => {
                         <ReactMarkdown>{message.content}</ReactMarkdown>
                     </div>
                 ))}
-                {isBotTyping && (
-                    <div className="flex gap-1 bg-gray-100 p-3 self-start rounded-2xl">
-                        <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse"></div>
-                        <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]"></div>
-                        <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]"></div>
-                    </div>
-                )}
+                {isBotTyping && <TypingIndicator />}
                 {error && <p className="text-red-500">{error}</p>}
             </div>
             <form
