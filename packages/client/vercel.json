@@ -3,7 +3,7 @@
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "https://chatbot-dz1k.onrender.com/"
+            "destination": "https://chatbot-dz1k.onrender.com/api/:path*"
         },
         {
             "source": "/(.*)",
