@@ -1,9 +1,9 @@
-import { GoogleGenAI } from '@google/genai';
+import { Groq } from 'groq-sdk';
 import { conversationRepository } from '../repositories/conversation.repository';
 
 // Implementation detail: do not export it
-const client = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
+const client = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
 });
 
 type ChatResponse = {
@@ -21,26 +21,26 @@ export const chatService = {
 
         chatHistory.push({
             role: 'user',
-            parts: [{ text: prompt }],
+            content: prompt,
         });
 
         // 2. Send prompt to gemini
-        const response = await client.models.generateContent({
-            model: 'gemini-2.5-flash-lite',
-            contents: chatHistory,
-            config: {
-                temperature: 0.2,
-                maxOutputTokens: 300,
-            },
+        const response = await client.chat.completions.create({
+            model: 'llama-3.1-8b-instant',
+            messages: chatHistory,
+            temperature: 0.2,
+            max_tokens: 300,
         });
 
+        const message = response.choices[0]?.message.content;
+
         chatHistory.push({
-            role: 'model',
-            parts: [{ text: response.text }],
+            role: 'assistant',
+            content: message,
         });
 
         conversationRepository.setChatHistory(conversationId, chatHistory);
 
-        return { id: response.responseId, message: response.text || '' };
+        return { id: response.id, message: message || '' };
     },
 };
