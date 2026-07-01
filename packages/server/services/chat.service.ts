@@ -1,13 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { Groq } from 'groq-sdk';
 import { conversationRepository } from '../repositories/conversation.repository';
 import template from '../prompts/chatbot.txt';
-
-// Implementation detail: do not export it
-const client = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
+import { llmClient } from '../llm/client';
 
 const parkInfo = fs.readFileSync(
     path.join(__dirname, '..', 'prompts', 'WonderWorld.md'),
@@ -39,22 +34,17 @@ export const chatService = {
         });
 
         // 2. Send prompt to gemini
-        const response = await client.chat.completions.create({
-            model: 'llama-3.1-8b-instant',
+        const response = await llmClient.generateText({
             messages: [systemMessage, ...chatHistory],
-            temperature: 0.2,
-            max_tokens: 300,
         });
-
-        const message = response.choices[0]?.message.content || '';
 
         chatHistory.push({
             role: 'assistant',
-            content: message,
+            content: response.text,
         });
 
         conversationRepository.setChatHistory(conversationId, chatHistory);
 
-        return { id: response.id, message: message || '' };
+        return { id: response.id, message: response.text || '' };
     },
 };

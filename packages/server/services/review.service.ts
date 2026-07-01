@@ -1,10 +1,6 @@
 import type { Review } from '@prisma/client';
-import { reviewRepository } from '../repositories/review.respository';
-import Groq from 'groq-sdk';
-
-const client = new Groq({
-    apiKey: process.env.GROQ_API_KEY,
-});
+import { reviewRepository } from '../repositories/review.repository';
+import { llmClient } from '../llm/client';
 
 export const reviewService = {
     async getReviews(productId: number): Promise<Review[]> {
@@ -24,18 +20,16 @@ export const reviewService = {
         `;
 
         // Call the AI model and get the summary
-        const response = await client.chat.completions.create({
-            model: 'llama-3.1-8b-instant',
+        const response = await llmClient.generateText({
             messages: [
                 {
                     role: 'user',
                     content: prompt,
                 },
             ],
-            temperature: 0.2,
-            max_tokens: 500,
+            maxTokens: 500,
         });
 
-        return response.choices[0]?.message.content || '';
+        return response.text;
     },
 };
