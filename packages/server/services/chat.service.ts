@@ -33,7 +33,6 @@ export const chatService = {
             content: prompt,
         });
 
-        // 2. Send prompt to gemini
         const response = await llmClient.generateText({
             messages: [systemMessage, ...chatHistory],
         });
