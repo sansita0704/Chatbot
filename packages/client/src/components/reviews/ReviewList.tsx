@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import StarRating from './StarRating';
+import { HiSparkles } from 'react-icons/hi2';
 import { useQuery } from '@tanstack/react-query';
+import StarRating from './StarRating';
+import { Button } from '../ui/button';
 
 type Props = {
     productId: number;
@@ -58,17 +59,32 @@ const ReviewList = ({ productId }: Props) => {
             </p>
         );
 
+    if (!reviewData?.reviews.length)
+        return <p>No reviews found for this product.</p>;
+
     return (
-        <div className="flex flex-col gap-5">
-            {reviewData?.reviews.map((review) => (
-                <div key={review.id}>
-                    <div className="font-bold">{review.author}</div>
-                    <div>
-                        <StarRating value={review.rating} />
+        <div>
+            <div className="mb-5">
+                {reviewData?.summary ? (
+                    <p>{reviewData?.summary}</p>
+                ) : (
+                    <Button>
+                        <HiSparkles />
+                        Summarize
+                    </Button>
+                )}
+            </div>
+            <div className="flex flex-col gap-5">
+                {reviewData?.reviews.map((review) => (
+                    <div key={review.id}>
+                        <div className="font-bold">{review.author}</div>
+                        <div>
+                            <StarRating value={review.rating} />
+                        </div>
+                        <div className="py-2">{review.content}</div>
                     </div>
-                    <div className="py-2">{review.content}</div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };
