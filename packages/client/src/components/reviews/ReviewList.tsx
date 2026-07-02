@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import StarRating from './StarRating';
 
 type Props = {
     productId: number;
@@ -38,7 +39,9 @@ const ReviewList = ({ productId }: Props) => {
             {reviewData?.reviews.map((review) => (
                 <div key={review.id}>
                     <div className="font-bold">{review.author}</div>
-                    <div>Rating: {review.rating}/5</div>
+                    <div>
+                        <StarRating value={review.rating} />
+                    </div>
                     <div className="py-2">{review.content}</div>
                 </div>
             ))}
