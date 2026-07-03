@@ -1,12 +1,17 @@
-import ChatBot from './components/chat/ChatBot';
-import ReviewList from './components/reviews/ReviewList';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ChatPage from './pages/ChatPage';
+import ReviewPage from './pages/ReviewPage';
+import Home from './pages/Home';
 
 function App() {
     return (
-        <div className="p-4 h-screen w-2xl mx-auto">
-            <ReviewList productId={1} />
-            <ChatBot />
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/chatbot" element={<ChatPage />} />
+                <Route path="/summarizer" element={<ReviewPage />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
