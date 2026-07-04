@@ -16,15 +16,7 @@ export const reviewService = {
         const prompt = template.replace('{{reviews}}', joinedReviews);
 
         // Call the AI model and get the summary
-        const { text: summary } = await llmClient.generateText({
-            messages: [
-                {
-                    role: 'user',
-                    content: prompt,
-                },
-            ],
-            maxTokens: 500,
-        });
+        const summary = await llmClient.summarize(joinedReviews);
 
         await reviewRepository.storeReviewSummary(productId, summary);
 
