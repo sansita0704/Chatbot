@@ -7,7 +7,7 @@
 [![Bun](https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh)
 [![Hugging Face](https://img.shields.io/badge/Hugging_Face-Inference-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Project-success?style=for-the-badge&logo=vercel)](https://sansita0704-chatbot.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_Project-success?style=for-the-badge&logo=vercel)](https://sansita0704-ai-app.vercel.app)
 
 A full-stack AI application featuring a customer support chatbot and an AI-powered product review summarizer.
 
