@@ -1,8 +1,7 @@
+// Load environment variables before any module that reads them at import time
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
 import router from './routes';
-
-dotenv.config();
 
 // Create the app
 const app = express();

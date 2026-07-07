@@ -24,7 +24,7 @@ export const chatController = {
 
         try {
             // 1. Take user's prompt from the chat
-            const { prompt, conversationId } = req.body;
+            const { prompt, conversationId } = parseResult.data;
             const response = await chatService.sendMessage(
                 prompt,
                 conversationId

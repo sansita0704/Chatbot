@@ -28,21 +28,24 @@ export const chatService = {
         const chatHistory =
             conversationRepository.getChatHistory(conversationId);
 
-        chatHistory.push({
+        const userMessage = {
             role: 'user',
             content: prompt,
-        });
+        };
 
         const response = await llmClient.generateText({
-            messages: [systemMessage, ...chatHistory],
+            messages: [systemMessage, ...chatHistory, userMessage],
         });
 
-        chatHistory.push({
-            role: 'assistant',
-            content: response.text,
-        });
-
-        conversationRepository.setChatHistory(conversationId, chatHistory);
+        // Only save the history once the model has responded, so a failed
+        // request doesn't leave an unanswered user message behind. Re-read
+        // the history here: a concurrent request on the same conversation
+        // may have added turns while we awaited the model.
+        conversationRepository.setChatHistory(conversationId, [
+            ...conversationRepository.getChatHistory(conversationId),
+            userMessage,
+            { role: 'assistant', content: response.text },
+        ]);
 
         return { id: response.id, message: response.text || '' };
     },

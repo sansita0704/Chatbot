@@ -42,8 +42,8 @@ export const reviewController = {
         // Check if the product id is valid or not
         const product = await productRepository.getProduct(productId);
         if (!product) {
-            res.status(400).json({
-                error: 'Invalid product',
+            res.status(404).json({
+                error: 'Product does not exist.',
             });
             return;
         }
